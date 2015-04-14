@@ -14,8 +14,13 @@ namespace royer {
         return std::fabs(internal - external)/(internal + external) > 0.125;
     }
 
-    DerandomPlayer::DerandomPlayer( unsigned long long seed, std::string name ) :
+    DerandomPlayer::DerandomPlayer(
+        unsigned long long seed,
+        std::string name,
+        bool keep
+    ) :
         rng(seed),
+        keep(keep),
         _name(name),
         _os( &null_stream )
     {}
@@ -38,12 +43,12 @@ namespace royer {
         }
     }
 
-    std::ostream& DerandomPlayer::out() {
-        return *_os;
-    }
-
     void DerandomPlayer::out( std::ostream& os ) {
         _os = &os;
+    }
+
+    std::ostream& DerandomPlayer::out() {
+        return *_os;
     }
 
 
@@ -53,7 +58,8 @@ namespace royer {
 
     void DerandomPlayer::begin_game() {
         my_index = core::index(this);
-        quantiles = std::vector<quantile>(core::player_count());
+        if( !keep || quantiles.size() != core::player_count() )
+            quantiles = std::vector<quantile>(core::player_count());
     }
 
     int DerandomPlayer::hand() {

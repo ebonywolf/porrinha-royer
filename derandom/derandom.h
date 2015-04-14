@@ -41,6 +41,10 @@ namespace royer {
         int my_hand;
         std::ostream * _os;
 
+        /* If keep() is true, this player will keep the statistics between games.
+         */
+        bool keep;
+
         /* Number of gaussian/pure random players. */
         int gaussian_count;
         int random_count;
@@ -56,7 +60,11 @@ namespace royer {
         int random( int max );
 
     public:
-        DerandomPlayer( unsigned long long seed, std::string name );
+        DerandomPlayer(
+            unsigned long long seed,
+            std::string name,
+            bool keep
+        );
 
         /* Sets/gets the output stream of this player.
          * Default output stream: royer::null_stream.
