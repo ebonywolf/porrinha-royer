@@ -24,12 +24,17 @@ namespace royer {
 "    Chooses N as the initial seed for the random moves.\n"
 "    Default: based on current time.\n"
 "\n"
+"--verbose\n"
+"    Prints the decision outcome to the screen.\n"
+"    Default: silent.\n"
+"\n"
 "--help\n"
 "    Display this help and quit.\n"
 ;
 
     Player * generateDerandom( cmdline::args&& args ) {
         bool seed_set = false;
+        bool verbose = false;
         unsigned long long seed = 
             std::chrono::system_clock::now().time_since_epoch().count();
         std::string name = "Derandom";
@@ -49,6 +54,10 @@ namespace royer {
                 seed_set = true;
                 continue;
             }
+            if( arg == "--verbose" ) {
+                verbose = true;
+                continue;
+            }
             std::cout << "[derandom]: Unknown option " << arg << '\n';
             std::exit(1);
         }
@@ -56,7 +65,10 @@ namespace royer {
         if( !seed_set )
             std::cout << "[derandom]: Using seed " << seed << '\n';
 
-        return new DerandomPlayer( seed, name );
+        auto * ptr = new DerandomPlayer( seed, name );
+        if( verbose )
+            ptr->out( std::cout );
+        return ptr;
     }
 
 } // namespace random_player

@@ -1,6 +1,7 @@
 #ifndef RANDOM_PLAYER_H
 #define RANDOM_PLAYER_H
 
+#include <ostream>
 #include <random>
 #include <vector>
 #include "player.h"
@@ -36,10 +37,9 @@ namespace royer {
         
         std::mt19937 rng;
         std::string _name;
-
         int my_index;
-
         int my_hand;
+        std::ostream * _os;
 
         /* Number of gaussian/pure random players. */
         int gaussian_count;
@@ -57,6 +57,12 @@ namespace royer {
 
     public:
         DerandomPlayer( unsigned long long seed, std::string name );
+
+        /* Sets/gets the output stream of this player.
+         * Default output stream: royer::null_stream.
+         */
+        void out( std::ostream& );
+        std::ostream& out();
 
         std::string name() const override;
         void begin_game() override;

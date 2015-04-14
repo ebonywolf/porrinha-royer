@@ -1,5 +1,7 @@
+#include <ostream>
 #include "core/util.h"
 #include "derandom.h"
+#include "porrinha-royer/nullstream.h"
 
 namespace royer {
     bool DerandomPlayer::quantile::is_gaussian() const {
@@ -14,7 +16,8 @@ namespace royer {
 
     DerandomPlayer::DerandomPlayer( unsigned long long seed, std::string name ) :
         rng(seed),
-        _name(name)
+        _name(name),
+        _os( &null_stream )
     {}
 
     int DerandomPlayer::random( int max ) {
@@ -35,6 +38,14 @@ namespace royer {
         }
     }
 
+    std::ostream& DerandomPlayer::out() {
+        return *_os;
+    }
+
+    void DerandomPlayer::out( std::ostream& os ) {
+        _os = &os;
+    }
+
 
     std::string DerandomPlayer::name() const {
         return _name;
@@ -47,22 +58,30 @@ namespace royer {
 
     int DerandomPlayer::hand() {
         compute_counts();
-        if( gaussian_count == 0 && random_count == 0 ) 
+        if( gaussian_count == 0 && random_count == 0 ) {
             /* No data information. Let's be pure random. */
+            out() << "[derandom]: no info, pure random move.\n";
             my_hand = random(core::chopsticks(my_index));
-        else if( gaussian_count == 0 )
+        }
+        else if( gaussian_count == 0 ) {
             /* No gaussians. Let's try to push the final number
              * as close to the mean as possible,
              * so that we may guess right, while the others will guess randomly.
              */
+            out() << "[derandom]: Gaussian move\n";
             my_hand = core::chopsticks(my_index)/2;
-        else if( random_count == 0 )
+        }
+        else if( random_count == 0 ) {
             /* All gaussians. Let's try to move the final value
              * as further from the mean as possible. */
+            out() << "[derandom]: Antigaussian move\n";
             my_hand = random(1) * core::chopsticks(my_index)/2;
-        else
+        }
+        else {
             /* Mixed gaussians/pure randoms. Let's be pure random. */
+            out() << "[derandom]: Mixed players, pure random move.\n";
             my_hand = random(core::chopsticks(my_index));
+        }
 
         return my_hand;
     }
