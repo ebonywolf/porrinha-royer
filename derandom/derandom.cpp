@@ -81,7 +81,7 @@ namespace royer {
             /* All gaussians. Let's try to move the final value
              * as further from the mean as possible. */
             out() << "[derandom]: Antigaussian move\n";
-            my_hand = random(1) * core::chopsticks(my_index)/2;
+            my_hand = random(1) * core::chopsticks(my_index);
         }
         else {
             /* Mixed gaussians/pure randoms. Let's be pure random. */
